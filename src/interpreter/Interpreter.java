@@ -81,9 +81,7 @@ public class Interpreter {
 	}
 	
 	private BshMethod getMethod(String methodName) throws CodeException, ParseException {
-		System.out.println(methodName);
 		for (BshMethod method: methods) {
-			System.out.println(method.getName());
 			if (method.getName().equals(methodName))
 				return method;
 		}

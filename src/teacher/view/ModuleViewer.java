@@ -1,30 +1,30 @@
 package teacher.view;
 
 import java.awt.BorderLayout;
+import java.util.*;
+import javax.swing.*;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import teacher.controller.CodeController;
-import teacher.controller.ModuleController;
-import teacher.model.CodeBlock;
-import teacher.model.Module;
-import teacher.model.ModuleObserver;
+import teacher.controller.*;
+import teacher.model.*;
 
 public class ModuleViewer implements ModuleObserver {
-	private Module module;
 	private Module controller;
 	private JFrame frame;
-	private JPanel currentSlide;
+	private SlideViewer slideViewer;
 	
 	public ModuleViewer(Module module, ModuleController controller) {
-		this.module = module;
 		this.controller = this.controller;
 		controller.setView(this);
 		
 		frame = new JFrame(module.getTopic());
-		currentSlide = new JPanel();
-		setSlideView(currentSlide);
+		slideViewer = new SlideViewer();
+		frame.getContentPane().add(slideViewer, BorderLayout.CENTER);
+		
+		List<String> subtopics = new ArrayList<String>();
+		subtopics.add("Subtopic 1");
+		subtopics.add("Subtopic 2");
+		SubtopicChooser chooser = new SubtopicChooser(subtopics);
+		frame.getContentPane().add(chooser, BorderLayout.WEST);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -38,10 +38,7 @@ public class ModuleViewer implements ModuleObserver {
 	}
 	
 	public void setSlideView(JPanel slideView) {
-		frame.getContentPane().remove(currentSlide);
-		currentSlide = slideView;
-		frame.getContentPane().add(currentSlide, BorderLayout.CENTER);
-		frame.pack();
+		slideViewer.setSlideView(slideView);
 	}
 
 	@Override
