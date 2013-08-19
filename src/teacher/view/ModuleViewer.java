@@ -2,8 +2,9 @@ package teacher.view;
 
 import java.awt.BorderLayout;
 import java.util.*;
-import javax.swing.*;
+import javax.swing.*; 
 
+import creator.HtmlEditorPanel;
 import teacher.controller.*;
 import teacher.model.*;
 
@@ -34,7 +35,8 @@ public class ModuleViewer implements ModuleObserver {
 	}
 	
 	public void displayCodeArea(CodeBlock codeBlock, CodeController codeController) {
-		setSlideView(new CodeArea(codeBlock, codeController));
+		//setSlideView(new JavaEditorPanel(codeBlock, codeController));
+		setSlideView(new HtmlEditorPanel());
 	}
 	
 	public void setSlideView(JPanel slideView) {
