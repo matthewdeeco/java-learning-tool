@@ -9,8 +9,8 @@ import interpreter.VoidMethodException;
 public class CodeBlock {
 	private String code;
 	
-	public CodeBlock(String codeBody) {
-		this.code = codeBody;
+	public CodeBlock(String code) {
+		this.code = code;
 	}
 	
 	public Object runMethod(String methodName) throws CodeException, ParseException, NonExistentMethodException, VoidMethodException {

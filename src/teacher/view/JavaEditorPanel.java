@@ -4,38 +4,29 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import creator.CodeEditorPanel;
-import teacher.controller.CodeController;
 import teacher.model.*;
 
-public class JavaEditorPanel extends JPanel {
-	private CodeController controller;
+public class JavaEditorPanel extends TextPanel {
 	private CodeEditorPanel codeArea;
 	private JTextField methodName;
 	private JButton evaluateButton;
 
-	public JavaEditorPanel(final CodeBlock codeBlock, CodeController controller) {
-		this.controller = controller;
-
+	public JavaEditorPanel() {
 		setLayout(new BorderLayout());
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				codeArea = new CodeEditorPanel("text/java");
-				codeArea.installAutoCompletion(new JavaCompletionProvider());
-				
-				codeArea.setText(codeBlock.getText());
-				add(codeArea, BorderLayout.CENTER);
-				revalidate();
-			}
-		});
+		codeArea = new CodeEditorPanel("text/java");
+		codeArea.installAutoCompletion(new JavaCompletionProvider());
+		add(codeArea, BorderLayout.CENTER);
 
 		evaluateButton = new JButton("Evaluate");
-		evaluateButton.addActionListener(new EvaluateListener());
 
 		methodName = new JTextField(15);
 		JPanel methodPanel = createPanel(new JLabel("Method to run: "), methodName, evaluateButton);
 		add(methodPanel, BorderLayout.SOUTH);
+	}
+	
+	public void addEvaluateListener(ActionListener listener) {
+		evaluateButton.addActionListener(listener);
 	}
 
 	private JPanel createPanel(JComponent... components) {
@@ -49,11 +40,21 @@ public class JavaEditorPanel extends JPanel {
 		JOptionPane.showMessageDialog(null, result);
 	}
 
-	class EvaluateListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String result = controller.runMethod(codeArea.getText(), methodName.getText());
-			JOptionPane.showMessageDialog(JavaEditorPanel.this, result);
-		}
+	@Override
+	public String getText() {
+		return getCodeBody();
+	}
+	
+	public String getCodeBody() {
+		return codeArea.getText();
+	}
+	
+	public String getMethodName() {
+		return methodName.getText();
+	}
+
+	@Override
+	public void setText(String text) {
+		codeArea.setText(text);
 	}
 }

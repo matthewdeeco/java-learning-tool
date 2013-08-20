@@ -1,49 +1,75 @@
 package teacher.view;
 
 import java.awt.BorderLayout;
-import java.util.*;
 import javax.swing.*; 
+import javax.swing.UIManager.LookAndFeelInfo;
 
-import creator.HtmlEditorPanel;
 import teacher.controller.*;
 import teacher.model.*;
 
 public class ModuleViewer implements ModuleObserver {
-	private Module controller;
-	private JFrame frame;
-	private SlideViewer slideViewer;
+	private ModuleReadOnly module;
+	private static JFrame frame;
+	private SlideNavigator slideNavigator;
 	
-	public ModuleViewer(Module module, ModuleController controller) {
-		this.controller = this.controller;
-		controller.setView(this);
+	public static JFrame getWindow() {
+		return frame;
+	}
+	
+	public ModuleViewer(ModuleReadOnly module, ModuleController controller) {
+		this.module = module;
+		module.registerObserver(this);
+		controller.setModuleViewer(this);
 		
-		frame = new JFrame(module.getTopic());
-		slideViewer = new SlideViewer();
-		frame.getContentPane().add(slideViewer, BorderLayout.CENTER);
+		tryToInitializeLookAndFeel();
+		frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Dialog.setParent(frame);
 		
-		List<String> subtopics = new ArrayList<String>();
-		subtopics.add("Subtopic 1");
-		subtopics.add("Subtopic 2");
-		SubtopicChooser chooser = new SubtopicChooser(subtopics);
+		slideNavigator = new SlideNavigator(module, controller);
+		frame.getContentPane().add(slideNavigator, BorderLayout.CENTER);
+		
+		TopicChooser chooser = new TopicChooser(module, controller);
 		frame.getContentPane().add(chooser, BorderLayout.WEST);
 		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		JMenuBar menuBar = new ModuleMenuBar(module, controller);
+		frame.setJMenuBar(menuBar);
+		
+		moduleChanged();
 		frame.pack();
 		frame.setVisible(true);
-		
-		controller.displayCodeArea();
 	}
-	
-	public void displayCodeArea(CodeBlock codeBlock, CodeController codeController) {
-		//setSlideView(new JavaEditorPanel(codeBlock, codeController));
-		setSlideView(new HtmlEditorPanel());
+
+	private void tryToInitializeLookAndFeel() {
+		try {
+			initializeLookAndFeel();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(-1);
+		}
 	}
-	
-	public void setSlideView(JPanel slideView) {
-		slideViewer.setSlideView(slideView);
+
+	/** Sets the look and feel to the Nimbus look and feel.
+	 *  If that fails, then sets the look and feel to Java's. */
+	private void initializeLookAndFeel() throws Exception {
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		        if ("Nimbus".equals(info.getName())) {
+		            UIManager.setLookAndFeel(info.getClassName());
+		            break;
+		        }
+		    }
+		} catch (Exception ex) {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		}
 	}
 
 	@Override
 	public void moduleChanged() {
+		frame.setTitle(module.getTitle());
+	}
+	
+	public String getCurrentSlideText() {
+		return slideNavigator.getText();
 	}
 }

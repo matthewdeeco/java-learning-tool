@@ -2,7 +2,7 @@ package teacher;
 
 import javax.swing.SwingUtilities;
 
-import teacher.controller.ModuleController;
+import teacher.controller.*;
 import teacher.model.Module;
 import teacher.view.ModuleViewer;
 
@@ -12,7 +12,7 @@ public class TestDriver {
 			@Override
 			public void run() {
 				Module module = new Module("Basic Input and Output");
-				ModuleController controller = new ModuleController(module);
+				ModuleController controller = new TeacherController(module);
 				ModuleViewer view = new ModuleViewer(module, controller);
 			}
 		});

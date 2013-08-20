@@ -1,22 +1,13 @@
-package creator;
+package teacher.view;
 
 import java.awt.BorderLayout;
-import java.io.IOException;
+import javax.swing.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import org.fife.ui.autocomplete.AutoCompletion;
-import org.fife.ui.autocomplete.CompletionProvider;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.autocomplete.*;
+import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import teacher.model.JavaCompletionProvider;
-
-public class CodeEditorPanel extends JPanel {
+public class CodeEditorPanel extends TextPanel {
 	private RSyntaxTextArea textArea;
 	
 	public CodeEditorPanel(String language) {
@@ -43,20 +34,14 @@ public class CodeEditorPanel extends JPanel {
 		return scrollPane;
 	}
 	
+	@Override
 	public void setText(String text) {
 		textArea.setText(text);
 	}
 	
+	@Override
 	public String getText() {
 		return textArea.getText();
-	}
-
-	private void changeToDarkTheme(RSyntaxTextArea textArea) {
-		try {
-			Theme theme = Theme.load(getClass().getResourceAsStream("/themes/dark.xml"));
-			theme.apply(textArea);
-		} catch (IOException ex) {
-		}
 	}
 
 	public void installAutoCompletion(CompletionProvider provider) {

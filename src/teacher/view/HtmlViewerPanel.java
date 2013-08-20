@@ -1,10 +1,10 @@
-package creator;
+package teacher.view;
 
 import java.awt.BorderLayout;
 
 import javax.swing.*;
 
-public class HtmlViewerPanel extends JPanel {
+public class HtmlViewerPanel extends TextPanel {
 	private JEditorPane editorPane;
 	
 	public HtmlViewerPanel() {
@@ -29,7 +29,13 @@ public class HtmlViewerPanel extends JPanel {
 		editorPane.setCaretPosition(0);
 		return editorPane;
 	}
+
+	@Override
+	public String getText() {
+		return editorPane.getText();
+	}
 	
+	@Override
 	public void setText(String text) {
 		editorPane.setText(text);
 	}

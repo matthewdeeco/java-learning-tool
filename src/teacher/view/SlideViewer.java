@@ -1,47 +1,75 @@
 package teacher.view;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.CardLayout;
+import java.awt.event.*;
+import javax.swing.JPanel;
 
-import javax.swing.*;
+import teacher.controller.ModuleController;
+import teacher.model.*;
 
-public class SlideViewer extends JPanel {
-	private final Dimension size = new Dimension(600, 450);
-	
-	private JPanel currentSlide;
-	
-	public SlideViewer() {
-		setLayout(new BorderLayout());
-		currentSlide = new JPanel();
-		
-		JButton prevButton = new JButton("<<");
-		JButton nextButton = new JButton(">>");
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
-		buttonPanel.add(prevButton);
-		buttonPanel.add(nextButton);
-		add(buttonPanel, BorderLayout.SOUTH);
+public class SlideViewer extends JPanel implements ModuleObserver {
+	private HtmlViewerPanel htmlPanel;
+	private JavaEditorPanel javaPanel;
+
+	private TextPanel visiblePanel;
+	private CardLayout cards;
+	private ModuleReadOnly module;
+	private ModuleController controller;
+
+	public SlideViewer(ModuleReadOnly module, ModuleController controller) {
+		this.module = module;
+		module.registerObserver(this);
+		this.controller = controller;
+
+		if (controller.isAdmin())
+			htmlPanel = new HtmlEditorPanel();
+		else
+			htmlPanel = new HtmlViewerPanel();
+		javaPanel = new JavaEditorPanel();
+		javaPanel.addEvaluateListener(new EvaluateListener());
+
+		cards = new CardLayout();
+		setLayout(cards);
+		add(htmlPanel, "HTML");
+		add(javaPanel, "Java");
+		moduleChanged();
 	}
-	
-	public void setSlideView(JPanel slideView) {
-		remove(currentSlide);
-		currentSlide = slideView;
-		add(currentSlide, BorderLayout.CENTER);
-		repaint();
-	}
-	
+
 	@Override
-	public Dimension getPreferredSize() {
-		return size;
+	public void moduleChanged() {
+		Slide currentSlide = module.getCurrentSlide();
+		switch (currentSlide.getType()) {
+			case TEXT:
+				htmlPanel.setText(currentSlide.getText());
+				cards.show(this, "HTML");
+				visiblePanel = htmlPanel;
+				break;
+			case CODE:
+				javaPanel.setText(currentSlide.getText());
+				cards.show(this, "Java");
+				visiblePanel = javaPanel;
+				break;
+			case TRUE_OR_FALSE:
+				break;
+			default:
+				throw new IllegalArgumentException("Unsupported slide type");
+		}
+
 	}
-	
-	@Override
-	public Dimension getMaximumSize() {
-		return size;
+
+	class EvaluateListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String result = controller.runMethod(javaPanel.getText(), javaPanel.getMethodName());
+			Dialog.infoMessage(result);
+		}
 	}
-	
-	@Override
-	public Dimension getMinimumSize() {
-		return size;
+
+	public String getText() {
+		return visiblePanel.getText();
+	}
+
+	public void setText(String text) {
+		visiblePanel.setText(text);
 	}
 }
