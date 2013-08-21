@@ -1,10 +1,6 @@
-package teacher.view;
+package teacher.view.editor;
 
 import java.awt.*;
-
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 
 public class HtmlEditorPanel extends HtmlViewerPanel {

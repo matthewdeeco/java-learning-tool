@@ -6,11 +6,14 @@ import javax.swing.JPanel;
 
 import teacher.controller.ModuleController;
 import teacher.model.*;
+import teacher.model.Slide.Type;
+import teacher.view.editor.*;
 
 public class SlideViewer extends JPanel implements ModuleObserver {
 	private HtmlViewerPanel htmlPanel;
 	private JavaEditorPanel javaPanel;
-
+	private TrueOrFalsePanel tofPanel;
+	
 	private TextPanel visiblePanel;
 	private CardLayout cards;
 	private ModuleReadOnly module;
@@ -25,44 +28,30 @@ public class SlideViewer extends JPanel implements ModuleObserver {
 			htmlPanel = new HtmlEditorPanel();
 		else
 			htmlPanel = new HtmlViewerPanel();
-		javaPanel = new JavaEditorPanel();
-		javaPanel.addEvaluateListener(new EvaluateListener());
-
+		javaPanel = new JavaEditorPanel(module, controller);
+		tofPanel = new TrueOrFalsePanel(module, controller);
+		
 		cards = new CardLayout();
 		setLayout(cards);
-		add(htmlPanel, "HTML");
-		add(javaPanel, "Java");
+		add(htmlPanel, Type.TEXT.toString());
+		add(javaPanel, Type.CODE.toString());
+		add(tofPanel, Type.TRUE_OR_FALSE.toString());
 		moduleChanged();
 	}
 
 	@Override
 	public void moduleChanged() {
 		Slide currentSlide = module.getCurrentSlide();
-		switch (currentSlide.getType()) {
-			case TEXT:
-				htmlPanel.setText(currentSlide.getText());
-				cards.show(this, "HTML");
-				visiblePanel = htmlPanel;
-				break;
-			case CODE:
-				javaPanel.setText(currentSlide.getText());
-				cards.show(this, "Java");
-				visiblePanel = javaPanel;
-				break;
-			case TRUE_OR_FALSE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported slide type");
-		}
+		Type currentSlideType = currentSlide.getType();
+		if (currentSlideType == Type.TEXT)
+			visiblePanel = htmlPanel;
+		else if (currentSlideType == Type.CODE)
+			visiblePanel = javaPanel;
+		else
+			visiblePanel = tofPanel;
+		cards.show(this, currentSlideType.toString());
+		setText(currentSlide.getText());
 
-	}
-
-	class EvaluateListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String result = controller.runMethod(javaPanel.getText(), javaPanel.getMethodName());
-			Dialog.infoMessage(result);
-		}
 	}
 
 	public String getText() {

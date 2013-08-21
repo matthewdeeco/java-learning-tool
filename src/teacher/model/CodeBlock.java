@@ -1,30 +1,25 @@
 package teacher.model;
 
-import interpreter.CodeException;
-import interpreter.Interpreter;
-import interpreter.NonExistentMethodException;
-import interpreter.ParseException;
-import interpreter.VoidMethodException;
+import interpreter.*;
 
 public class CodeBlock {
-	private String code;
+	private String classCode;
 	
 	public CodeBlock(String code) {
-		this.code = code;
+		this.classCode = code;
 	}
 	
-	public Object runMethod(String methodName) throws CodeException, ParseException, NonExistentMethodException, VoidMethodException {
-		Interpreter interpreter = new Interpreter(code);
-		Object result = interpreter.runMethod(methodName);
-		return result;
+	public Object getTestResult(String testCode) throws CodeException, ParseException {
+		Interpreter interpreter = new Interpreter(classCode);
+		return interpreter.evaluate(testCode);
 	}
 	
 	public void setText(String text) {
-		this.code = text;
+		this.classCode = text;
 	}
 	
 	public String getText() {
-		return code;
+		return classCode;
 	}
 	
 	@Override

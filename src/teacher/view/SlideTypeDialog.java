@@ -28,8 +28,6 @@ public class SlideTypeDialog implements ActionListener {
 		for (Type type: Type.values())
 			createButton(type.getName(), group, radioButtonPanel);
 		buttons.get(DEFAULT_TYPE).doClick();
-		// TODO implement True-or-False exercise
-		buttons.get(2).setEnabled(false);
 		
 		JPanel actionPanel = new JPanel();
 		actionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));

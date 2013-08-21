@@ -1,4 +1,4 @@
-package teacher.view;
+package teacher.view.editor;
 
 import java.awt.BorderLayout;
 

@@ -93,10 +93,10 @@ public abstract class ModuleController {
 	}
 	
 	/** @return the toString of the Object returned by the method */
-	public String runMethod(String codeBlock, String methodName) {
+	public String testCode(String classCode, String testCode) {
 		try {
-			CodeBlock code = new CodeBlock(codeBlock);
-			Object result = code.runMethod(methodName);
+			CodeBlock code = new CodeBlock(classCode);
+			Object result = code.getTestResult(testCode);
 			return "Result is: " + result.toString();
 		} catch (CodeException ex) {
 			return "Exception thrown from the code:\n" + ex.getMessage();
@@ -105,5 +105,14 @@ public abstract class ModuleController {
 		} catch (Exception ex) {
 			return ex.getMessage();
 		}
+	}
+
+	/** Check the user's answers to true or false. */
+	public String checkTofAnswers(Object[] correctAnswers, Boolean[] userAnswers) {
+		int nCorrect = 0;
+		for (int i = 0; i < correctAnswers.length; i++)
+			if ((Boolean)correctAnswers[i] == userAnswers[i])
+				nCorrect++;
+		return String.format("You got %d/%d questions correct!", nCorrect, correctAnswers.length);
 	}
 }

@@ -37,16 +37,17 @@ public class Module implements ModuleReadOnly, Serializable {
 		} else {
 			currentTopic().deleteCurrentSlide();
 
-			if (currentTopic().hasSlideCount(0)) {
+			if (currentTopic().hasSlideCount(0)) { // remove topics with no slides
 				topics.remove(currentTopicIndex);
 				if (currentTopicIndex == topics.size())
-					currentTopicIndex--;
-			} else
+					previousTopic(); // go to last topic
+			} else // go to last slide in topic
 				currentTopic().previousSlide();
 		}
 		notifyObservers();
 	}
 	
+	/** The slide cannot be deleted if it is the only slide remaining in an intro topic. */
 	public boolean canDeleteCurrentSlide() {
 		boolean isIntro = currentTopic().isIntroTopic();
 		boolean isLastSlideInTopic = currentTopic().hasSlideCount(1);
@@ -73,7 +74,7 @@ public class Module implements ModuleReadOnly, Serializable {
 	}
 	
 	public void nextSlide() {
-		if (currentTopicHasNextSlide())
+		if (currentTopic().hasNextSlide())
 			currentTopic().nextSlide();
 		else
 			nextTopic();
@@ -85,7 +86,7 @@ public class Module implements ModuleReadOnly, Serializable {
 	}
 	
 	public void previousSlide() {
-		if (currentTopicHasPreviousSlide())
+		if (currentTopic().hasPreviousSlide())
 			currentTopic().previousSlide();
 		else
 			previousTopic();
@@ -106,23 +107,15 @@ public class Module implements ModuleReadOnly, Serializable {
 	}
 	
 	public boolean hasNextSlide() {
-		return currentTopicHasNextSlide() || hasNextTopic();
+		return currentTopic().hasNextSlide() || hasNextTopic();
 	}
 	
 	public boolean hasPreviousSlide() {
-		return currentTopicHasPreviousSlide() || hasPreviousTopic();
-	}
-	
-	private boolean currentTopicHasPreviousSlide() {
-		return currentTopic().hasPreviousSlide();
+		return currentTopic().hasPreviousSlide() || hasPreviousTopic();
 	}
 	
 	private boolean hasPreviousTopic() {
 		return currentTopicIndex > 0 && topics.size() > 0;
-	}
-	
-	private boolean currentTopicHasNextSlide() {
-		return currentTopic().hasNextSlide(); 
 	}
 	
 	private boolean hasNextTopic() {

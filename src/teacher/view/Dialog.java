@@ -26,15 +26,13 @@ public class Dialog {
 	 * @return a non-empty string. */
 	public static String inputString(String message) {
 		while (true) {
-			try {
-				String currentString = showInputDialog(parent, message, "Input", QUESTION_MESSAGE);
-				if (!currentString.isEmpty()) {
-					return currentString;
-				}
-				errorMessage("Your input was invalid!");
-			} catch (NullPointerException ex) {
+			String currentString = showInputDialog(parent, message, "Input", QUESTION_MESSAGE);
+			if (currentString == null)
 				return null;
-			}
+			if (currentString.isEmpty())
+				errorMessage("You didn't enter anything!");
+			else
+				return currentString;
 		}
 	}
 
@@ -45,12 +43,11 @@ public class Dialog {
 	public static String inputString(String message, int maxLength) {
 		while (true) {
 			String currentString = inputString(message + " (" + maxLength + " letters max)");
-
 			if (currentString == null)
 				return null;
-			else if (currentString.length() <= maxLength) {
+			else if (currentString.length() <= maxLength)
 				return currentString;
-			} else
+			else
 				errorMessage("Length exceeded " + maxLength + " letters!");
 		}
 	}

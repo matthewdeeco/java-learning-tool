@@ -3,6 +3,9 @@ package teacher.model;
 import java.io.Serializable;
 
 public class Slide implements Serializable {
+	/** Used to mark end of a field in the text String. */
+	public static final String FIELD_DELIMITER = "\nBBAF029ABD53E88F\n";
+	
 	public enum Type {
 		TEXT("Regular slide"),
 		CODE("Coding exercise"),
