@@ -11,7 +11,7 @@ public class TestDriver {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				Module module = new Module("Basic Input and Output");
+				Module module = new Module();
 				ModuleController controller = new TeacherController(module);
 				ModuleViewer view = new ModuleViewer(module, controller);
 			}

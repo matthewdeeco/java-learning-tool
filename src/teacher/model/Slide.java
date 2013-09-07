@@ -3,8 +3,11 @@ package teacher.model;
 import java.io.Serializable;
 
 public class Slide implements Serializable {
+	private static final long serialVersionUID = 1L;
 	/** Used to mark end of a field in the text String. */
 	public static final String FIELD_DELIMITER = "\nBBAF029ABD53E88F\n";
+	public static final Type DEFAULT_TYPE = Type.TEXT;
+	
 	
 	public enum Type {
 		TEXT("Regular slide"),

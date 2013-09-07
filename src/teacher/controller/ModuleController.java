@@ -1,118 +1,40 @@
 package teacher.controller;
 
-import interpreter.*;
-import teacher.model.*;
-import teacher.model.Slide.Type;
-import teacher.view.*;
+import teacher.model.Slide;
+import teacher.view.DialogHandler;
+import teacher.view.ModuleViewer;
 
-public abstract class ModuleController {
-	private Module module;
-	private ModuleViewer viewer;
-	private SaveLoadHandler saveLoadHandler;
+public interface ModuleController {
+	public boolean isAdmin();
 	
-	public ModuleController(Module module) {
-		this.module = module;
-		saveLoadHandler = new SaveLoadHandler();
-	}
+	public void createNewModule();
+	public void renameModule();
+	public void saveModule();
+	public void saveModuleAs();
+	public void loadModule();
+	public String getLastSavePath();
+	public void exit();
 	
-	public void setModuleViewer(ModuleViewer viewer) {
-		this.viewer = viewer;
-	}
+	public void createNewTopic();
+	public void renameCurrentTopic();
+	public void deleteCurrentTopic();
+	public void nextTopic();
+	public void previousTopic();
 	
-	public abstract boolean isAdmin();
+	public void createNewSlide();
+	public void createNewSlide(Slide.Type selectedType);
+	public void deleteCurrentSlide();
+	public void nextSlide();
+	public void previousSlide();
 
-	public void setTopicByIndex(int index) {
-		saveChanges();
-		module.setTopicByIndex(index);
-	}
+	public String checkTofAnswers(Object[] array, Boolean[] userAnswers);
+	public void setTopicByIndex(int index);
+	public void setModuleViewer(ModuleViewer moduleViewer);
+	public String testCode(String text, String text2);
 
-	public void previousSlide() {
-		saveChanges();
-		module.previousSlide();
-	}
-	
-	public void nextSlide() {
-		saveChanges();
-		module.nextSlide();
-	}
-	
-	public void saveModule() {
-		saveChanges();
-		saveLoadHandler.saveState(module);
-	}
-	
-	public void loadModule() {
-		Module newModule = saveLoadHandler.loadState();
-		if (newModule != null) {
-			module.loadModule(newModule);
-		}
-	}
+	public void displayHelp();
+	public void displayAbout();
 
-	public void createNewModule() {
-		String title = Dialog.inputString("Enter the module name: ");
-		if (title != null) {
-			Module newModule = new Module(title);
-			module.loadModule(newModule);
-		}
-	}
-
-	public void createNewSubtopic() {
-		String title = Dialog.inputString("Enter the topic name: ");
-		if (title != null)
-			module.createNewTopic(title);
-	}
-
-	public void createNewSlide() {
-		saveChanges();
-		SlideTypeDialog dialog = new SlideTypeDialog();
-		Type selectedType = dialog.getSelectedType();
-		if (selectedType != null)
-			module.createNewSlide(selectedType);
-	}
-
-	public void deleteCurrentSlide() {
-		module.deleteCurrentSlide();
-	}
-
-	private void saveChanges() {
-		module.setCurrentSlideText(viewer.getCurrentSlideText());
-	}
-	
-	public void exit() {
-		if (Dialog.confirmYesNo("Are you sure you want to quit?"))
-			System.exit(0);
-	}
-	
-	public void displayHelp() {
-		Dialog.errorMessage("I AM ERROR");
-	}
-	
-	public void displayAbout() {
-		Dialog.infoMessage("Learning Module Creator\n" +
-				"by: Matthew Co and Harvey Arbas");
-	}
-	
-	/** @return the toString of the Object returned by the method */
-	public String testCode(String classCode, String testCode) {
-		try {
-			CodeBlock code = new CodeBlock(classCode);
-			Object result = code.getTestResult(testCode);
-			return "Result is: " + result.toString();
-		} catch (CodeException ex) {
-			return "Exception thrown from the code:\n" + ex.getMessage();
-		} catch (ParseException ex) {
-			return "Parsing exception:\n" + ex.getMessage();
-		} catch (Exception ex) {
-			return ex.getMessage();
-		}
-	}
-
-	/** Check the user's answers to true or false. */
-	public String checkTofAnswers(Object[] correctAnswers, Boolean[] userAnswers) {
-		int nCorrect = 0;
-		for (int i = 0; i < correctAnswers.length; i++)
-			if ((Boolean)correctAnswers[i] == userAnswers[i])
-				nCorrect++;
-		return String.format("You got %d/%d questions correct!", nCorrect, correctAnswers.length);
-	}
+	public void setDialogHandler(DialogHandler dialogHandler);
+	public void setLastSavePath(String savePath);
 }

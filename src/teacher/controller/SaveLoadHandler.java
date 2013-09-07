@@ -3,28 +3,40 @@ package teacher.controller;
 import java.io.*;
 
 import teacher.model.Module;
-import teacher.view.Dialog;
+import teacher.view.DialogHandler;
 
 public class SaveLoadHandler {
 	private static final String FILE_EXTENSION = "lm";
 	private static final String DESCRIPTION = "Learning Module (*." + FILE_EXTENSION + ")";
-
+	private DialogHandler dialogHandler;
+	private String lastSavePath = null;
+	private String lastLoadPath = null;
+	
 	public void saveState(Module model) {
-		String filePath = Dialog.inputSaveFilePath(DESCRIPTION, FILE_EXTENSION);
-		if (filePath != null)
+		if (lastSavePath == null)
+			saveStateAs(model);
+		else
+			saveState(model, lastSavePath);
+	}
+	
+	public void saveStateAs(Module model) {
+		String filePath = dialogHandler.inputSaveFilePath(DESCRIPTION, FILE_EXTENSION);
+		if (filePath != null) {
+			filePath = addFileExtensionIfNotThere(filePath);
+			lastSavePath = filePath;
 			saveState(model, filePath);
+		}
 	}
 
 	private void saveState(Module model, String filePath) {
 		ObjectOutputStream writer = null;
 		try {
-			filePath = addFileExtensionIfNotThere(filePath);
 			writer = new ObjectOutputStream(new FileOutputStream(filePath));
 			writer.writeObject(model);
 		} catch (Exception ex) {
-			String message = "Error saving the module!\n" + "Make sure you have the privilege "
+			String message = "Error saving the module!\n" + "Make sure you have the permissions "
 					+ "to save to that folder.";
-			Dialog.errorMessage(message);
+			dialogHandler.errorMessage(message);
 			ex.printStackTrace();
 		} finally {
 			tryToClose(writer);
@@ -46,8 +58,7 @@ public class SaveLoadHandler {
 	}
 
 	public Module loadState() {
-		String filePath = Dialog.inputLoadFilePath(DESCRIPTION, FILE_EXTENSION);
-
+		String filePath = dialogHandler.inputLoadFilePath(DESCRIPTION, FILE_EXTENSION);
 		if (filePath == null)
 			return null;
 		else
@@ -60,14 +71,31 @@ public class SaveLoadHandler {
 		try {
 			reader = new ObjectInputStream(new FileInputStream(filePath));
 			loadedGameModel = (Module) reader.readObject();
+			lastLoadPath = filePath;
 			return loadedGameModel;
 		} catch (Exception ex) {
 			String message = "Error loading your save file!\n" + "Make sure that your module is in the \n"
 					+ "correct format and that the file exists.";
-			Dialog.errorMessage(message);
+			dialogHandler.errorMessage(message);
 		} finally {
 			tryToClose(reader);
 		}
 		return loadedGameModel;
+	}
+
+	public void setDialogHandler(DialogHandler dialogHandler) {
+		this.dialogHandler = dialogHandler;
+	}
+
+	public String getLastSavePath() {
+		return lastSavePath;
+	}
+
+	public void setLastSavePath(String lastSavePath) {
+		this.lastSavePath = lastSavePath;
+	}
+	
+	public String getLastLoadPath() {
+		return lastLoadPath;
 	}
 }

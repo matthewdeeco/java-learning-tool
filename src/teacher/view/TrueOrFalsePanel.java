@@ -25,12 +25,12 @@ public class TrueOrFalsePanel extends TextPanel implements ModuleObserver {
 	private JButton evaluateButton;
 	private JScrollPane scrollPane;
 	
-	private ModuleReadOnly module;
 	private ModuleController controller;
+	private DialogHandler dialogHandler;
 	
-	public TrueOrFalsePanel(ModuleReadOnly module, ModuleController controller) {
-		this.module = module;
+	public TrueOrFalsePanel(ModuleController controller, DialogHandler dialogHandler) {
 		this.controller = controller;
+		this.dialogHandler = dialogHandler;
 		
 		setLayout(new BorderLayout());
 		
@@ -61,7 +61,11 @@ public class TrueOrFalsePanel extends TextPanel implements ModuleObserver {
 		int n = groups.size();
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < n; i++) {
-			sb.append(groups.get(i).getSelection().getActionCommand());
+			ButtonModel selection = groups.get(i).getSelection();
+			if (selection == null)
+				sb.append(FALSE_ANSWER);
+			else
+				sb.append(selection.getActionCommand());
 			sb.append(" ");
 			sb.append(questions.get(i).getText());
 			if (i < n - 1)
@@ -145,7 +149,10 @@ public class TrueOrFalsePanel extends TextPanel implements ModuleObserver {
 			questions.get(questions.size() - 1).requestFocus();
 			revalidate();
 			repaint();
-			
+			snapScrollBarDown();
+		}
+		
+		private void snapScrollBarDown() {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -158,6 +165,11 @@ public class TrueOrFalsePanel extends TextPanel implements ModuleObserver {
 	class EvaluateListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			String result = controller.checkTofAnswers(answers.toArray(), getUserAnswers());
+			dialogHandler.infoMessage(result);
+		}
+		
+		private Boolean[] getUserAnswers() {
 			int i = 0;
 			Boolean[] userAnswers = new Boolean[answers.size()];
 			for (ButtonGroup group: groups)
@@ -167,8 +179,11 @@ public class TrueOrFalsePanel extends TextPanel implements ModuleObserver {
 					userAnswers[i++] = true;
 				else
 					userAnswers[i++] = false;
-			String result = controller.checkTofAnswers(answers.toArray(), userAnswers);
-			Dialog.infoMessage(result);
+			return userAnswers;
 		}
+	}
+
+	public boolean isEmpty() {
+		return questions.isEmpty();
 	}
 }

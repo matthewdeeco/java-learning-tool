@@ -39,4 +39,9 @@ public class HtmlViewerPanel extends TextPanel {
 	public void setText(String text) {
 		editorPane.setText(text);
 	}
+
+	@Override
+	public boolean isEmpty() {
+		return editorPane.getText().isEmpty();
+	}
 }

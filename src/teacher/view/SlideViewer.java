@@ -1,7 +1,6 @@
 package teacher.view;
 
 import java.awt.CardLayout;
-import java.awt.event.*;
 import javax.swing.JPanel;
 
 import teacher.controller.ModuleController;
@@ -19,7 +18,7 @@ public class SlideViewer extends JPanel implements ModuleObserver {
 	private ModuleReadOnly module;
 	private ModuleController controller;
 
-	public SlideViewer(ModuleReadOnly module, ModuleController controller) {
+	public SlideViewer(ModuleReadOnly module, ModuleController controller, DialogHandler dialogHandler) {
 		this.module = module;
 		module.registerObserver(this);
 		this.controller = controller;
@@ -28,8 +27,8 @@ public class SlideViewer extends JPanel implements ModuleObserver {
 			htmlPanel = new HtmlEditorPanel();
 		else
 			htmlPanel = new HtmlViewerPanel();
-		javaPanel = new JavaEditorPanel(module, controller);
-		tofPanel = new TrueOrFalsePanel(module, controller);
+		javaPanel = new JavaEditorPanel(controller, dialogHandler);
+		tofPanel = new TrueOrFalsePanel(controller, dialogHandler);
 		
 		cards = new CardLayout();
 		setLayout(cards);
@@ -51,7 +50,6 @@ public class SlideViewer extends JPanel implements ModuleObserver {
 			visiblePanel = tofPanel;
 		cards.show(this, currentSlideType.toString());
 		setText(currentSlide.getText());
-
 	}
 
 	public String getText() {
@@ -60,5 +58,9 @@ public class SlideViewer extends JPanel implements ModuleObserver {
 
 	public void setText(String text) {
 		visiblePanel.setText(text);
+	}
+
+	public boolean isEmpty() {
+		return visiblePanel.isEmpty();
 	}
 }

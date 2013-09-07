@@ -1,6 +1,9 @@
 package teacher.view;
 
 import java.awt.BorderLayout;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.*; 
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -9,24 +12,25 @@ import teacher.model.*;
 
 public class ModuleViewer implements ModuleObserver {
 	private ModuleReadOnly module;
-	private static JFrame frame;
+	private ModuleController controller;
+	private JFrame frame;
 	private SlideNavigator slideNavigator;
-	
-	public static JFrame getWindow() {
-		return frame;
-	}
+	private DialogHandler dialogHandler;
 	
 	public ModuleViewer(ModuleReadOnly module, ModuleController controller) {
 		this.module = module;
 		module.registerObserver(this);
+		this.controller = controller;
 		controller.setModuleViewer(this);
 		
 		tryToInitializeLookAndFeel();
 		frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Dialog.setParent(frame);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.addWindowListener(new WindowCloseListener());
 		
-		slideNavigator = new SlideNavigator(module, controller);
+		dialogHandler = new DialogHandler(frame);
+		controller.setDialogHandler(dialogHandler);
+		slideNavigator = new SlideNavigator(module, controller, dialogHandler);
 		frame.getContentPane().add(slideNavigator, BorderLayout.CENTER);
 		
 		TopicChooser chooser = new TopicChooser(module, controller);
@@ -66,10 +70,39 @@ public class ModuleViewer implements ModuleObserver {
 
 	@Override
 	public void moduleChanged() {
-		frame.setTitle(module.getTitle());
+		if (module.hasModuleLoaded()) {
+			String title = module.getTitle();
+			String lastSavePath = controller.getLastSavePath(); 
+			if (lastSavePath != null)
+				title += " - " + lastSavePath;
+			frame.setTitle(title);
+			frame.getContentPane().setVisible(true);
+		}
+		else {
+			frame.setTitle("No module loaded");
+			frame.getContentPane().setVisible(false);
+		}
 	}
 	
 	public String getCurrentSlideText() {
 		return slideNavigator.getText();
+	}
+
+	public void dispose() {
+		frame.dispose();
+	}
+	
+	class WindowCloseListener implements WindowListener {
+		@Override
+		public void windowClosing(WindowEvent arg0) {
+			controller.exit();
+		}
+
+		public void windowActivated(WindowEvent arg0) {}
+		public void windowClosed(WindowEvent arg0) {}
+		public void windowDeactivated(WindowEvent arg0) {}
+		public void windowDeiconified(WindowEvent arg0) {}
+		public void windowIconified(WindowEvent arg0) {}
+		public void windowOpened(WindowEvent arg0) {}
 	}
 }

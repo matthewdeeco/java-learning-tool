@@ -5,26 +5,23 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import static javax.swing.JOptionPane.*;
 
 /** Utility dialogs to input data into the program. */
-public class Dialog {
-	private static JFrame parent;
+public class DialogHandler {
+	private JFrame parent;
 
-	private Dialog() {
-	}
-
-	public static void setParent(JFrame frame) {
-		parent = frame;
+	public DialogHandler(JFrame parent) {
+		this.parent = parent;
 	}
 
 	/** Asks the user to input a string with the default message.
 	 * @return a non-empty string. */
-	public static String inputString() {
+	public String inputString() {
 		return inputString("Enter a sequence of characters: ");
 	}
 
 	/** Asks the user to input a string.
 	 * @param message the desired message to be displayed.
 	 * @return a non-empty string. */
-	public static String inputString(String message) {
+	public String inputString(String message) {
 		while (true) {
 			String currentString = showInputDialog(parent, message, "Input", QUESTION_MESSAGE);
 			if (currentString == null)
@@ -40,7 +37,7 @@ public class Dialog {
 	 * @param message the desired message to be displayed.
 	 * @param maxLength the maximum number of characters in the string.
 	 * @return a string with length less than or equal to the maxLength. */
-	public static String inputString(String message, int maxLength) {
+	public String inputString(String message, int maxLength) {
 		while (true) {
 			String currentString = inputString(message + " (" + maxLength + " letters max)");
 			if (currentString == null)
@@ -55,7 +52,7 @@ public class Dialog {
 	/** Prompts the user with a yes / no option.
 	 * @param message the message to be displayed.
 	 * @return true if yes, false if no. */
-	public static boolean confirmYesNo(String message) {
+	public boolean confirmYesNo(String message) {
 		return showConfirmDialog(parent, message, "Confirm", YES_NO_OPTION, WARNING_MESSAGE) == YES_OPTION;
 	}
 
@@ -63,7 +60,7 @@ public class Dialog {
 	 * @param message the message to be displayed.
 	 * @param icon the icon to be displayed.
 	 * @return true if yes, false if no. */
-	public static boolean confirmYesNo(String message, Icon icon) {
+	public boolean confirmYesNo(String message, Icon icon) {
 		return showConfirmDialog(parent, message, "Confirm", YES_NO_OPTION, PLAIN_MESSAGE, icon) == YES_OPTION;
 	}
 
@@ -71,7 +68,7 @@ public class Dialog {
 	 * @param description the save file description.
 	 * @param format the save file format.
 	 * @return the save file path string, null if the operation was aborted. */
-	public static String inputSaveFilePath(String description, String format) {
+	public String inputSaveFilePath(String description, String format) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter(description, format));
 		int userChoice = fileChooser.showSaveDialog(parent);
@@ -86,7 +83,7 @@ public class Dialog {
 	 * @param description the save file description.
 	 * @param format the save file format.
 	 * @return the save file path string, null if the operation was aborted. */
-	public static String inputLoadFilePath(String description, String format) {
+	public String inputLoadFilePath(String description, String format) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter(description, format));
 		int userChoice = fileChooser.showOpenDialog(parent);
@@ -99,26 +96,26 @@ public class Dialog {
 
 	/** Displays a plain message dialog.
 	 * @param message the message to be displayed. */
-	public static void message(String message) {
+	public void message(String message) {
 		showMessageDialog(parent, message, "Message", PLAIN_MESSAGE);
 	}
 
 	/** Displays a plain message dialog.
 	 * @param message the message to be displayed.
 	 * @param icon the icon to be displayed. */
-	public static void message(String message, ImageIcon icon) {
+	public void message(String message, ImageIcon icon) {
 		showMessageDialog(parent, message, "Message", PLAIN_MESSAGE, icon);
 	}
 
 	/** Displays an information dialog.
 	 * @param message the message to be displayed. */
-	public static void infoMessage(String message) {
+	public void infoMessage(String message) {
 		showMessageDialog(parent, message, "Info", INFORMATION_MESSAGE);
 	}
 
 	/** Displays an error dialog.
 	 * @param message the message to be displayed. */
-	public static void errorMessage(String message) {
+	public void errorMessage(String message) {
 		showMessageDialog(parent, message, "Error", ERROR_MESSAGE);
 	}
 }

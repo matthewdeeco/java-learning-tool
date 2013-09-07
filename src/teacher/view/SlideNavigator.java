@@ -10,6 +10,8 @@ import teacher.model.*;
 /** Controls the slide viewer through navigation buttons. */  
 public class SlideNavigator extends JPanel implements ModuleObserver {
 	private final Dimension size = new Dimension(650, 450);
+	private final Color prevButtonColor = new Color(0x2290C1);
+	private final Color nextButtonColor = new Color(0xA022D1);
 	
 	private ModuleReadOnly module;
 	private ModuleController controller;
@@ -17,10 +19,8 @@ public class SlideNavigator extends JPanel implements ModuleObserver {
 	private SlideViewer slideViewer;
 	private JButton prevButton;
 	private JButton nextButton;
-	private JButton newSlideButton;
-	private JButton deleteSlideButton;
 	
-	public SlideNavigator(ModuleReadOnly module, ModuleController controller) {
+	public SlideNavigator(ModuleReadOnly module, ModuleController controller, DialogHandler dialogHandler) {
 		this.module = module;
 		module.registerObserver(this);
 		this.controller = controller;
@@ -28,27 +28,19 @@ public class SlideNavigator extends JPanel implements ModuleObserver {
 		setLayout(new BorderLayout());
 		
 		prevButton = new JButton("<<");
+		prevButton.setBackground(prevButtonColor);
 		prevButton.addActionListener(new NavigationListener());
 		nextButton = new JButton(">>");
+		nextButton.setBackground(nextButtonColor);
 		nextButton.addActionListener(new NavigationListener());
-		
-		newSlideButton = new JButton("New slide");
-		newSlideButton.addActionListener(new NewSlideListener());
-		deleteSlideButton = new JButton("Delete slide");
-		deleteSlideButton.addActionListener(new DeleteSlideListener());
 		
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
 		buttonPanel.add(prevButton);
 		buttonPanel.add(nextButton);
 		
-		if (controller.isAdmin()) {
-			buttonPanel.add(newSlideButton);
-			buttonPanel.add(deleteSlideButton);
-		}
-		
 		add(buttonPanel, BorderLayout.SOUTH);
 		
-		slideViewer = new SlideViewer(module, controller);
+		slideViewer = new SlideViewer(module, controller, dialogHandler);
 		add(slideViewer, BorderLayout.CENTER);
 		moduleChanged();
 	}
@@ -79,20 +71,8 @@ public class SlideNavigator extends JPanel implements ModuleObserver {
 
 	@Override
 	public void moduleChanged() {
-		if (module.hasNextSlide())
-			nextButton.setEnabled(true);
-		else
-			nextButton.setEnabled(false);
-		
-		if (module.hasPreviousSlide())
-			prevButton.setEnabled(true);
-		else
-			prevButton.setEnabled(false);
-		
-		if (module.canDeleteCurrentSlide())
-			deleteSlideButton.setEnabled(true);
-		else
-			deleteSlideButton.setEnabled(false);
+		prevButton.setEnabled(module.hasPreviousSlide());
+		nextButton.setEnabled(module.hasNextSlide());
 	}
 	
 	public String getText() {
@@ -106,20 +86,6 @@ public class SlideNavigator extends JPanel implements ModuleObserver {
 				controller.previousSlide();
 			else
 				controller.nextSlide();
-		}
-	}
-	
-	class NewSlideListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			controller.createNewSlide();
-		}
-	}
-
-	class DeleteSlideListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			controller.deleteCurrentSlide();
 		}
 	}
 }

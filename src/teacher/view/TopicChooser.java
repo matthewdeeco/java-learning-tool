@@ -11,11 +11,12 @@ import teacher.model.*;
 
 public class TopicChooser extends JPanel implements ActionListener, ModuleObserver {
 	private final Color bgColor = new Color(0xA2A2A2);
-	private final Color focusColor = new Color(0x22C190);
+	private final Color focusColor = new Color(0x50B102);
 	
 	private ModuleReadOnly module;
 	private ModuleController controller;
 	private JPanel topicsPanel;
+	private SlideTracker slideTracker;
 	private List<JButton> topicButtons;
 	
 	public TopicChooser(ModuleReadOnly module, ModuleController controller) {
@@ -30,11 +31,9 @@ public class TopicChooser extends JPanel implements ActionListener, ModuleObserv
 		topicsPanel.setOpaque(false);
 		add(topicsPanel, BorderLayout.CENTER);
 		
-		if (controller.isAdmin()) {
-			JButton newTopicButton = new JButton("New Topic");
-			newTopicButton.addActionListener(new NewSubtopicListener());
-			add(newTopicButton, BorderLayout.SOUTH);
-		}
+		slideTracker = new SlideTracker(module);
+		add(slideTracker, BorderLayout.SOUTH);
+		
 		moduleChanged();
 	}
 
@@ -66,12 +65,5 @@ public class TopicChooser extends JPanel implements ActionListener, ModuleObserv
 		setFocusOn(module.getCurrentTopicIndex());
 		revalidate();
 		repaint();
-	}
-
-	class NewSubtopicListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			controller.createNewSubtopic();
-		}
 	}
 }

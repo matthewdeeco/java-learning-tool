@@ -48,4 +48,8 @@ public class CodeEditorPanel extends TextPanel {
 		AutoCompletion autoCompletion = new AutoCompletion(provider);
 		autoCompletion.install(textArea);
 	}
+	
+	public boolean isEmpty() {
+		return textArea.getText().isEmpty();
+	}
 }

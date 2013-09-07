@@ -6,6 +6,7 @@ import java.util.*;
 import teacher.model.Slide.Type;
 
 public class Topic implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String title;
 	private List<Slide> slides;
 	private transient int currentSlideIndex;
@@ -56,11 +57,23 @@ public class Topic implements Serializable {
 		currentSlideIndex = index;
 	}
 
-	public boolean hasSlideCount(int count) {
-		return slides.size() == count;
+	public boolean hasNoSlides() {
+		return slides.size() == 0;
 	}
 
 	public boolean isIntroTopic() {
 		return false;
+	}
+
+	public void rename(String newTitle) {
+		this.title = newTitle;
+	}
+
+	public int getCurrentSlideIndex() {
+		return currentSlideIndex;
+	}
+	
+	public int getSlideCount() {
+		return slides.size();
 	}
 }

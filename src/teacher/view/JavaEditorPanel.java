@@ -15,12 +15,12 @@ public class JavaEditorPanel extends TextPanel {
 	private HtmlViewerPanel specs;
 	private JButton evaluateButton;
 	
-	private ModuleReadOnly module;
 	private ModuleController controller;
+	private DialogHandler dialogHandler;
 
-	public JavaEditorPanel(ModuleReadOnly module, ModuleController controller) {
-		this.module = module;
+	public JavaEditorPanel(ModuleController controller, DialogHandler dialog) {
 		this.controller = controller;
+		this.dialogHandler = dialog;
 		
 		setLayout(new BorderLayout());
 
@@ -31,25 +31,24 @@ public class JavaEditorPanel extends TextPanel {
 		
 		codeArea = new CodeEditorPanel("text/java");
 		codeArea.installAutoCompletion(new JavaCompletionProvider());
-		
-		evaluateButton = new JButton("Evaluate");
-		evaluateButton.addActionListener(new EvaluateListener());
-		codeArea.add(evaluateButton, BorderLayout.SOUTH);
 
 		testArea = new CodeEditorPanel("text/java");
 		testArea.installAutoCompletion(new JavaCompletionProvider());
 		
+		evaluateButton = new JButton("Evaluate");
+		evaluateButton.addActionListener(new EvaluateListener());
+		testArea.add(evaluateButton, BorderLayout.SOUTH);
+		
 		tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
 		tabbedPane.addTab("Problem specs", specs);
 		tabbedPane.addTab("Class code", codeArea);
-		if (controller.isAdmin())
-			tabbedPane.addTab("Test code", testArea);
+		tabbedPane.addTab("Test code", testArea);
 		
 		add(tabbedPane, BorderLayout.CENTER);
 	}
 
 	public void showResult(String result) {
-		Dialog.infoMessage(result);
+		dialogHandler.infoMessage(result);
 	}
 
 	@Override
@@ -68,16 +67,29 @@ public class JavaEditorPanel extends TextPanel {
 		if (text.isEmpty())
 			return;
 		String[] fields = text.split(Slide.FIELD_DELIMITER);
-		specs.setText(fields[0]);
-		codeArea.setText(fields[1]);
-		testArea.setText(fields[2]);
+		if (fields.length > 0)
+			specs.setText(fields[0]);
+		else
+			specs.setText("");
+		if (fields.length > 1)
+			codeArea.setText(fields[1]);
+		else
+			codeArea.setText("");
+		if (fields.length > 2)
+			testArea.setText(fields[2]);
+		else
+			testArea.setText("");
 	}
 
 	class EvaluateListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String result = controller.testCode(codeArea.getText(), testArea.getText());
-			Dialog.infoMessage(result);
+			dialogHandler.infoMessage(result);
 		}
+	}
+	
+	public boolean isEmpty() {
+		return specs.getText().isEmpty();
 	}
 }
