@@ -30,10 +30,10 @@ public class JavaEditorPanel extends TextPanel {
 			specs = new HtmlViewerPanel();
 		
 		codeArea = new CodeEditorPanel("text/java");
-		codeArea.installAutoCompletion(new JavaCompletionProvider());
+		installAutoCompletion(codeArea);
 
 		testArea = new CodeEditorPanel("text/java");
-		testArea.installAutoCompletion(new JavaCompletionProvider());
+		installAutoCompletion(testArea);
 		
 		evaluateButton = new JButton("Evaluate");
 		evaluateButton.addActionListener(new EvaluateListener());
@@ -45,6 +45,14 @@ public class JavaEditorPanel extends TextPanel {
 		tabbedPane.addTab("Test code", testArea);
 		
 		add(tabbedPane, BorderLayout.CENTER);
+	}
+
+	private void installAutoCompletion(CodeEditorPanel codeArea) {
+		try {
+			codeArea.installAutoCompletion(new JavaCompletionProvider());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public void showResult(String result) {
@@ -64,28 +72,34 @@ public class JavaEditorPanel extends TextPanel {
 
 	@Override
 	public void setText(String text) {
-		if (text.isEmpty())
-			return;
-		String[] fields = text.split(Slide.FIELD_DELIMITER);
-		if (fields.length > 0)
-			specs.setText(fields[0]);
-		else
+		tabbedPane.setSelectedIndex(0);
+		if (text.isEmpty()) {
 			specs.setText("");
-		if (fields.length > 1)
-			codeArea.setText(fields[1]);
-		else
 			codeArea.setText("");
-		if (fields.length > 2)
-			testArea.setText(fields[2]);
-		else
 			testArea.setText("");
+		} else {
+			String[] fields = text.split(Slide.FIELD_DELIMITER);
+			if (fields.length > 0)
+				specs.setText(fields[0]);
+			else
+				specs.setText("");
+			if (fields.length > 1)
+				codeArea.setText(fields[1]);
+			else
+				codeArea.setText("");
+			if (fields.length > 2)
+				testArea.setText(fields[2]);
+			else
+				testArea.setText("");
+		}
 	}
 
 	class EvaluateListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String result = controller.testCode(codeArea.getText(), testArea.getText());
-			dialogHandler.infoMessage(result);
+			if (result != null)
+				dialogHandler.infoMessage(result);
 		}
 	}
 	

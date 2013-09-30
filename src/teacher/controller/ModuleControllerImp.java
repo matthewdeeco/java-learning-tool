@@ -135,6 +135,8 @@ abstract class ModuleControllerImp implements ModuleController {
 					return "Correct!!";
 				else
 					return "Sorry, try again.";
+			} else if (result == null) {
+				return null;
 			}
 			else
 				return "Result is: " + result.toString();
