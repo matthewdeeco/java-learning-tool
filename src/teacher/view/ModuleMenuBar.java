@@ -97,8 +97,8 @@ public class ModuleMenuBar extends JMenuBar implements ActionListener, ModuleObs
 		nextSlideMenuItem = createMenuItem("Next Slide", slideMenu);
 		nextSlideMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.ALT_MASK));
 		
-		helpMenuItem = createMenuItem("Help Manual", helpMenu);
-		helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+		// helpMenuItem = createMenuItem("Help Manual", helpMenu);
+		// helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		
 		aboutMenuItem = createMenuItem("About", helpMenu);
 	}
@@ -152,7 +152,7 @@ public class ModuleMenuBar extends JMenuBar implements ActionListener, ModuleObs
 		else if (menuPressed == helpMenuItem)
 			controller.displayHelp();
 		else if (menuPressed == aboutMenuItem)
-			controller.displayHelp();
+			controller.displayAbout();
 	}
 
 	@Override

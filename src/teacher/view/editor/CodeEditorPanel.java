@@ -2,8 +2,6 @@ package teacher.view.editor;
 
 import java.awt.BorderLayout;
 import javax.swing.*;
-
-import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -21,7 +19,6 @@ public class CodeEditorPanel extends TextPanel {
 		textArea.setSyntaxEditingStyle(language);
 		textArea.setCodeFoldingEnabled(true);
 		textArea.setAntiAliasingEnabled(true);
-		//changeToDarkTheme(textArea);
 		return textArea;
 	}
 	
@@ -42,11 +39,6 @@ public class CodeEditorPanel extends TextPanel {
 	@Override
 	public String getText() {
 		return textArea.getText();
-	}
-
-	public void installAutoCompletion(CompletionProvider provider) {
-		AutoCompletion autoCompletion = new AutoCompletion(provider);
-		autoCompletion.install(textArea);
 	}
 	
 	public boolean isEmpty() {

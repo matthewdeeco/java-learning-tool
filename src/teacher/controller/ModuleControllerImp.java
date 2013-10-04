@@ -77,7 +77,7 @@ abstract class ModuleControllerImp implements ModuleController {
 			public void run() {
 				ModuleController newController = createSameLevelController(module);
 				newController.setLastSavePath(savePath);
-				ModuleViewer newViewer = new ModuleViewer(module, newController);
+				new ModuleViewer(module, newController);
 			}
 		});
 	}
@@ -122,7 +122,7 @@ abstract class ModuleControllerImp implements ModuleController {
 	
 	public void displayAbout() {
 		dialogHandler.infoMessage("Learning Module Creator\n" +
-				"by: Matthew Co and Harvey Arbas");
+				"by: Matthew Co and Harvey Arbas\nUniversity of the Philippines Diliman");
 	}
 	
 	/** @return the toString of the Object returned by the method */

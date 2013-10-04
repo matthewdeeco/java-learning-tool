@@ -8,7 +8,6 @@ public class Interpreter {
 
 	public Interpreter(String code) throws CodeException, ParseException {
 		interpreter = new bsh.Interpreter();
-		interpreter.setStrictJava(true);
 		
 		evaluate(code);
 	}

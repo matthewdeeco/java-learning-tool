@@ -4,7 +4,6 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/bsh-2.0b4.jar"/>
 	<classpathentry kind="lib" path="lib/rsyntaxtextarea.jar"/>
-	<classpathentry kind="lib" path="lib/autocomplete.jar"/>
 	<classpathentry kind="lib" path="lib/SHEF.jar"/>
 	<classpathentry kind="lib" path="lib/jtidy-8.0.jar"/>
 	<classpathentry kind="lib" path="lib/novaworx-syntax-0.0.7.jar"/>

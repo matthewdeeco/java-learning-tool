@@ -30,10 +30,7 @@ public class JavaEditorPanel extends TextPanel {
 			specs = new HtmlViewerPanel();
 		
 		codeArea = new CodeEditorPanel("text/java");
-		installAutoCompletion(codeArea);
-
 		testArea = new CodeEditorPanel("text/java");
-		installAutoCompletion(testArea);
 		
 		evaluateButton = new JButton("Evaluate");
 		evaluateButton.addActionListener(new EvaluateListener());
@@ -45,14 +42,6 @@ public class JavaEditorPanel extends TextPanel {
 		tabbedPane.addTab("Test code", testArea);
 		
 		add(tabbedPane, BorderLayout.CENTER);
-	}
-
-	private void installAutoCompletion(CodeEditorPanel codeArea) {
-		try {
-			codeArea.installAutoCompletion(new JavaCompletionProvider());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	public void showResult(String result) {
